@@ -2,6 +2,10 @@
 Changes will have no impact on execution/evaluation within VPL
 */
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.AsSubgraph;
+import org.jgrapht.graph.DefaultWeightedEdge;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,13 +13,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
-import org.jgrapht.Graph;
-import org.jgrapht.graph.AsSubgraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-
 public class Main {
 	public static void main(String[] args) throws IOException {
-		
+		String dir = "a1/cxx/";
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Which algorithm would you like to test (MST,ShortestPath,SteinerTree)?");
         String algorithm = reader.readLine();
@@ -24,15 +24,15 @@ public class Main {
         
         if (algorithm.equals("MST")) {
 			System.out.println("Computing MST of Graph "+graphNumber+":");
-			Graph<Integer, DefaultWeightedEdge> graph = GraphReader.readGraph("Graph"+graphNumber+".lgf");
+			Graph<Integer, DefaultWeightedEdge> graph = GraphReader.readGraph(dir+"Graph"+graphNumber+".lgf");
 			AsSubgraph<Integer, DefaultWeightedEdge> tree = mySpanningTree.computeMST(graph);
 			CheckerSpanningTree.checkSpanningTree(graph, tree);
 		}
         		
         if (algorithm.equals("ShortestPath")) {
 			System.out.println("Computing ShortestPath of Graph "+graphNumber+":");
-			Graph<Integer, DefaultWeightedEdge> graph = GraphReader.readGraph("Graph"+graphNumber+".lgf");
-			ArrayList<Integer> vertexList = new ArrayList<Integer>(graph.vertexSet());
+			Graph<Integer, DefaultWeightedEdge> graph = GraphReader.readGraph(dir+"Graph"+graphNumber+".lgf");
+			ArrayList<Integer> vertexList = new ArrayList<>(graph.vertexSet());
 			Random randomGenerator = new Random();
 			Integer startVertex = vertexList.get(randomGenerator.nextInt(vertexList.size()));
 			Integer endVertex = vertexList.get(randomGenerator.nextInt(vertexList.size()));
@@ -57,8 +57,8 @@ public class Main {
         	}
             output += ":";
 			System.out.println(output);
-			Graph<Integer, DefaultWeightedEdge> graph = GraphReader.readGraph("Graph"+graphNumber+".lgf");
-			HashSet<Integer> terminals = GraphReader.readTerminals("Graph"+graphNumber+"_Terminals"+terminalNumber+".txt");
+			Graph<Integer, DefaultWeightedEdge> graph = GraphReader.readGraph(dir+"Graph"+graphNumber+".lgf");
+			HashSet<Integer> terminals = GraphReader.readTerminals(dir+"Graph"+graphNumber+"_Terminals"+terminalNumber+".txt");
 			AsSubgraph<Integer, DefaultWeightedEdge> steinerTree = mySteinerTree.computeSteinerTree(graph, terminals);
 			CheckerSteinerTree.checkSteinerTree(steinerTree, terminals);
 		}
