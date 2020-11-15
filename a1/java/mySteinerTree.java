@@ -30,6 +30,7 @@ public class mySteinerTree {
 		}
 
 		// calculate min-spanning tree of -> dense <- terminal graph
+		// TODO replace edges with shortest paths connecting terminals such that steinerTree is a subgraph of Graph
 		return mySpanningTree.computeMST(steinerTree);
 	}
 
