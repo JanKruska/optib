@@ -59,12 +59,8 @@ public class myShortestPath {
 	}
 
 	private void updateVertexDistance(Integer source, Integer target){
-		Integer pred = predecessors.get(target);
-		if(pred==null) {
-			distances.put(target,graph.getEdgeWeight(graph.getEdge(source,target)));
-			predecessors.put(target, source);
-		}else if(distances.get(pred) + graph.getEdgeWeight(graph.getEdge(source,target)) < distances.get(target)){
-			distances.put(target, distances.get(pred) + graph.getEdgeWeight(graph.getEdge(pred,target)));
+		if(distances.get(source) + graph.getEdgeWeight(graph.getEdge(source,target)) < distances.get(target)){
+			distances.put(target, distances.get(source) + graph.getEdgeWeight(graph.getEdge(source,target)));
 			predecessors.put(target, source);
 		}
 	}
