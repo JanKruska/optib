@@ -17,45 +17,22 @@ public class mySpanningTree {
 				.iterator();
 
 		//Initialize connected components, in the beginning all vertices are their own component
-		List<Set<Integer>> subgraphs = new ArrayList<>();
-		for (Integer vertex: graph.vertexSet()) {
-			Set<Integer> set = new HashSet<>();
-			set.add(vertex);
-			subgraphs.add(set);
-		}
+		MyDisjointSet disjointSet = new MyDisjointSet(graph.vertexSet());
 
 		//While there are multiple components, add edges that connect two
-		while(subgraphs.size()>1) {
+		while(edges.hasNext()) {
 			DefaultWeightedEdge edge = edges.next();
-			//Get the components containing source and target
-			var first = subgraphs.stream()
-					.filter(x->x.contains(graph.getEdgeSource(edge)))
-					.collect(Collectors.toList());
-			var second = subgraphs.stream()
-					.filter(x->x.contains(graph.getEdgeTarget(edge)))
-					.collect(Collectors.toList());
-
-			//Should only be one subgraph, otherwise something went wrong
-			assert first.size()==1;
-			assert second.size()==1;
-
-			Set<Integer> g1 = first.get(0);
-			Set<Integer> g2 = second.get(0);
+			//Get the componentsIds containing source and target
+			Integer compSource = disjointSet.SEARCH(graph.getEdgeSource(edge));
+			Integer compTarget = disjointSet.SEARCH(graph.getEdgeTarget(edge));
 
 			//If source and target are in different components, adding the edge between them does not result in a cycle, so add it
-			if(g1!=g2){
+			if(!compSource.equals(compTarget)){
 				//Add edge
 				tree.addEdge(graph.getEdgeSource(edge),graph.getEdgeTarget(edge),edge);
 				//Fuse the two components together
-				if(g1.size()>g2.size()) {
-					subgraphs.remove(g2);
-					g1.addAll(g2);
-				}else{
-					subgraphs.remove(g1);
-					g2.addAll(g1);
-				}
+				disjointSet.MERGE(compSource, compTarget);
 			}
-
 		}
 		return tree;
 	}
