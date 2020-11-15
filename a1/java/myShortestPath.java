@@ -4,6 +4,9 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //Implements shortest path algorithms. Can return distances to vertices from a given start vertex and the corresponding shortest path.
 public class myShortestPath {
@@ -23,19 +26,36 @@ public class myShortestPath {
 	
 	//Computes distances and predecessors for all nodes
 	public void computeDistPred() {
+		if(graph.edgeSet().stream().anyMatch(x->graph.getEdgeWeight(x)<0)){
+			bellmanFord();
+		}else {
+			dijkstra();
+		}
+	}
 
+	/**
+	 * Bellman-Ford shortest path, currently only for undirected graphs
+	 */
+	public void bellmanFord(){
+		//Distance to all vertices is inf and pred is null
 		for (Integer vertex : graph.vertexSet()) {
 			distances.put(vertex, Double.MAX_VALUE);
 			predecessors.put(vertex, null);
 		}
+		//Distance to start vertex is zero
 		distances.put(startVertex, 0.);
 
+		//V-1 times
 		for (int i = 1; i < graph.vertexSet().size()-1; i++) {
+			//relax each edge
 			for (var edge: graph.edgeSet()) {
+				//Get vertices of edge and respective weight
 				Integer u = graph.getEdgeSource(edge);
 				Integer v = graph.getEdgeTarget(edge);
 				double weight = graph.getEdgeWeight(edge);
 
+				//Currently checks edge both ways
+				//TODO: directed graph handling
 				if(distances.get(u) + weight < distances.get(v)) {
 					distances.put(v, distances.get(u) + weight);
 					predecessors.put(v, u);
@@ -45,6 +65,54 @@ public class myShortestPath {
 				}
 
 			}
+		}
+	}
+
+	/**
+	 * Dijkstras shortest path
+	 */
+	public void dijkstra() {
+		Map<Integer,Boolean> colour = new HashMap<>();
+		//Initialize all distances as Inf, pred as null
+		for (Integer vertex : graph.vertexSet()) {
+			distances.put(vertex, Double.MAX_VALUE);
+			predecessors.put(vertex, null);
+			colour.put(vertex,Boolean.FALSE);
+		}
+		//Add start vertex with distance = 0
+		distances.put(startVertex, 0.);
+		colour.put(startVertex,Boolean.TRUE);
+		//Update all neighbours of start vertex
+		adjacent(startVertex)
+				.filter(x->colour.get(x)==Boolean.FALSE)
+				.forEach(x->updateVertexDistance(startVertex,x));
+
+		//Only works on graphs where a path to every other node is possible (as of now)
+		//TODO: break if only unreachable nodes remain
+		for (int i = 0; i < graph.vertexSet().size()-1; i++) {
+			//Get vertex,distance pair with minimum distance
+			Map.Entry<Integer, Double> min = Collections.min(
+					distances.entrySet().stream()
+							.filter(x->colour.get(x.getKey())==Boolean.FALSE) //Only consider unadded vertices
+							.collect(Collectors.toList()),
+					Map.Entry.comparingByValue());
+			//Set the minimum vertex to added
+			colour.put(min.getKey(),Boolean.TRUE);
+			//Update all neighbours added vertex
+			adjacent(min.getKey())
+					.filter(x->colour.get(x)==Boolean.FALSE)
+					.forEach(x->updateVertexDistance(min.getKey(),x));
+		}
+	}
+
+	private Stream<Integer> adjacent(Integer start){
+		return graph.vertexSet().stream().filter(x-> graph.containsEdge(start,x));
+	}
+
+	private void updateVertexDistance(Integer source, Integer target){
+		if(distances.get(source) + graph.getEdgeWeight(graph.getEdge(source,target)) < distances.get(target)){
+			distances.put(target, distances.get(source) + graph.getEdgeWeight(graph.getEdge(source,target)));
+			predecessors.put(target, source);
 		}
 	}
 
