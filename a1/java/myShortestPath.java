@@ -4,9 +4,6 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 //Implements shortest path algorithms. Can return distances to vertices from a given start vertex and the corresponding shortest path.
 public class myShortestPath {
@@ -26,50 +23,31 @@ public class myShortestPath {
 	
 	//Computes distances and predecessors for all nodes
 	public void computeDistPred() {
-		Map<Integer,Boolean> colour = new HashMap<>();
+
 		for (Integer vertex : graph.vertexSet()) {
 			distances.put(vertex, Double.MAX_VALUE);
 			predecessors.put(vertex, null);
-			colour.put(vertex,Boolean.FALSE);
-        }
+		}
 		distances.put(startVertex, 0.);
-		colour.put(startVertex,Boolean.TRUE);
-		adjacent(startVertex)
-				.filter(x->colour.get(x)==Boolean.FALSE)
-				.forEach(x->updateVertexDistance(startVertex,x));
 
-		//Only works on graphs where a path to every other node is possible (as of now)
-		//TODO: break if only unreachable nodes remain
-		for (int i = 0; i < graph.vertexSet().size()-1; i++) {
-			Map.Entry<Integer, Double> min = Collections.min(
-						distances.entrySet().stream()
-							.filter(x->colour.get(x.getKey())==Boolean.FALSE)
-							.collect(Collectors.toList()),
-						Map.Entry.comparingByValue());
+		for (int i = 1; i < graph.vertexSet().size()-1; i++) {
+			for (var edge: graph.edgeSet()) {
+				Integer u = graph.getEdgeSource(edge);
+				Integer v = graph.getEdgeTarget(edge);
+				double weight = graph.getEdgeWeight(edge);
 
-			colour.put(min.getKey(),Boolean.TRUE);
-			adjacent(min.getKey())
-					.filter(x->colour.get(x)==Boolean.FALSE)
-					.forEach(x->updateVertexDistance(min.getKey(),x));
+				if(distances.get(u) + weight < distances.get(v)) {
+					distances.put(v, distances.get(u) + weight);
+					predecessors.put(v, u);
+				}else if(distances.get(v) + weight < distances.get(u)){
+					distances.put(u, distances.get(v) + weight);
+					predecessors.put(u, v);
+				}
+
+			}
 		}
 	}
 
-	private Stream<Integer> adjacent(Integer start){
-		return graph.vertexSet().stream().filter(x-> graph.containsEdge(start,x));
-	}
-
-	private void updateVertexDistance(Integer source, Integer target){
-		Integer pred = predecessors.get(target);
-		if(pred==null) {
-			distances.put(target,graph.getEdgeWeight(graph.getEdge(source,target)));
-			predecessors.put(target, source);
-		}else if(distances.get(pred) + graph.getEdgeWeight(graph.getEdge(source,target)) < distances.get(target)){
-			distances.put(target, distances.get(pred) + graph.getEdgeWeight(graph.getEdge(pred,target)));
-			predecessors.put(target, source);
-		}
-	}
-	
-	
 	//Constructs the shortest path from the start node to a given end node using the list of predecessors
 	public ArrayList<Integer> constructPathToNode(Integer endVertex) {
 		ArrayList<Integer> path = new ArrayList<>();
