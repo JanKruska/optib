@@ -26,14 +26,63 @@ public class myShortestPath {
 	
 	//Computes distances and predecessors for all nodes
 	public void computeDistPred() {
+		if(graph.edgeSet().stream().anyMatch(x->graph.getEdgeWeight(x)<0)){
+			bellmanFord();
+		}else {
+			dijkstra();
+		}
+	}
+
+	/**
+	 * Bellman-Ford shortest path, currently only for undirected graphs
+	 */
+	public void bellmanFord(){
+		//Distance to all vertices is inf and pred is null
+		for (Integer vertex : graph.vertexSet()) {
+			distances.put(vertex, Double.MAX_VALUE);
+			predecessors.put(vertex, null);
+		}
+		//Distance to start vertex is zero
+		distances.put(startVertex, 0.);
+
+		//V-1 times
+		for (int i = 1; i < graph.vertexSet().size()-1; i++) {
+			//relax each edge
+			for (var edge: graph.edgeSet()) {
+				//Get vertices of edge and respective weight
+				Integer u = graph.getEdgeSource(edge);
+				Integer v = graph.getEdgeTarget(edge);
+				double weight = graph.getEdgeWeight(edge);
+
+				//Currently checks edge both ways
+				//TODO: directed graph handling
+				if(distances.get(u) + weight < distances.get(v)) {
+					distances.put(v, distances.get(u) + weight);
+					predecessors.put(v, u);
+				}else if(distances.get(v) + weight < distances.get(u)){
+					distances.put(u, distances.get(v) + weight);
+					predecessors.put(u, v);
+				}
+
+			}
+		}
+	}
+
+	/**
+	 * Dijkstras shortest path
+	 */
+	public void dijkstra() {
 		Map<Integer,Boolean> colour = new HashMap<>();
+		//Initialize all distances as Inf, pred as null
 		for (Integer vertex : graph.vertexSet()) {
 			distances.put(vertex, Double.MAX_VALUE);
 			predecessors.put(vertex, null);
 			colour.put(vertex,Boolean.FALSE);
-        }
+		}
+		//Add start vertex with distance = 0
 		distances.put(startVertex, 0.);
 		colour.put(startVertex,Boolean.TRUE);
+		//Update all neighbours of start vertex
 		adjacent(startVertex)
 				.filter(x->colour.get(x)==Boolean.FALSE)
 				.forEach(x->updateVertexDistance(startVertex,x));
@@ -41,13 +90,15 @@ public class myShortestPath {
 		//Only works on graphs where a path to every other node is possible (as of now)
 		//TODO: break if only unreachable nodes remain
 		for (int i = 0; i < graph.vertexSet().size()-1; i++) {
+			//Get vertex,distance pair with minimum distance
 			Map.Entry<Integer, Double> min = Collections.min(
-						distances.entrySet().stream()
-							.filter(x->colour.get(x.getKey())==Boolean.FALSE)
+					distances.entrySet().stream()
+							.filter(x->colour.get(x.getKey())==Boolean.FALSE) //Only consider unadded vertices
 							.collect(Collectors.toList()),
-						Map.Entry.comparingByValue());
-
+					Map.Entry.comparingByValue());
+			//Set the minimum vertex to added
 			colour.put(min.getKey(),Boolean.TRUE);
+			//Update all neighbours added vertex
 			adjacent(min.getKey())
 					.filter(x->colour.get(x)==Boolean.FALSE)
 					.forEach(x->updateVertexDistance(min.getKey(),x));
@@ -64,8 +115,7 @@ public class myShortestPath {
 			predecessors.put(target, source);
 		}
 	}
-	
-	
+
 	//Constructs the shortest path from the start node to a given end node using the list of predecessors
 	public ArrayList<Integer> constructPathToNode(Integer endVertex) {
 		ArrayList<Integer> path = new ArrayList<>();
