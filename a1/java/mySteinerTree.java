@@ -11,16 +11,26 @@ public class mySteinerTree {
 	
 	//Receives a graph and computes a steiner tree
 	public static AsSubgraph<Integer, DefaultWeightedEdge> computeSteinerTree(Graph<Integer, DefaultWeightedEdge> graph, HashSet<Integer> terminals) {
-		AsSubgraph<Integer, DefaultWeightedEdge> steinerTree = new AsSubgraph<Integer, DefaultWeightedEdge>(graph, new HashSet<Integer>(), new HashSet<DefaultWeightedEdge>());
+		Graph<Integer, DefaultWeightedEdge> steinerTree = new DefaultUndirectedWeightedGraph<>(DefaultWeightedEdge.class);
 		for (Integer terminal : terminals) {
 			steinerTree.addVertex(terminal);
 		}
-		/**		
-		 * 
-		 * 		Implement your algorithm here
-		 * 
-		**/
-		return steinerTree;
+
+		// compute distance between all vertex pairs
+		for (Integer vertexA : steinerTree.vertexSet()) {
+			for (Integer vertexB : steinerTree.vertexSet()) {
+
+				//ensure uniqueness of pairs
+				if (vertexA < vertexB) {
+					myShortestPath shortestPath = new myShortestPath(graph, vertexA);
+					shortestPath.computeDistPred();
+					steinerTree.setEdgeWeight(steinerTree.addEdge(vertexA, vertexB), shortestPath.getDistanceToNode(vertexB));
+				}
+			}
+		}
+
+		// calculate min-spanning tree of -> dense <- terminal graph
+		return mySpanningTree.computeMST(steinerTree);
 	}
 
 }
