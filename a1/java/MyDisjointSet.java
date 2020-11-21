@@ -1,4 +1,3 @@
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -11,7 +10,6 @@ public class MyDisjointSet {
         vertices = vertexSet;
         for (Integer vertex: vertexSet) {
             vertexComponentAssociation.put(vertex, vertex);
-            // no
         }
     }
 

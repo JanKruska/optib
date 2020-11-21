@@ -55,7 +55,6 @@ public class myShortestPath {
 				double weight = graph.getEdgeWeight(edge);
 
 				//Currently checks edge both ways
-				//TODO: directed graph handling
 				if(distances.get(u) + weight < distances.get(v)) {
 					distances.put(v, distances.get(u) + weight);
 					predecessors.put(v, u);
@@ -72,36 +71,39 @@ public class myShortestPath {
 	 * Dijkstras shortest path
 	 */
 	public void dijkstra() {
-		Map<Integer,Boolean> colour = new HashMap<>();
+		Map<Integer,Boolean> added = new HashMap<>();
 		//Initialize all distances as Inf, pred as null
 		for (Integer vertex : graph.vertexSet()) {
 			distances.put(vertex, Double.MAX_VALUE);
 			predecessors.put(vertex, null);
-			colour.put(vertex,Boolean.FALSE);
+			added.put(vertex,Boolean.FALSE);
 		}
 		//Add start vertex with distance = 0
 		distances.put(startVertex, 0.);
-		colour.put(startVertex,Boolean.TRUE);
+		added.put(startVertex,Boolean.TRUE);
 		//Update all neighbours of start vertex
 		adjacent(startVertex)
-				.filter(x->colour.get(x)==Boolean.FALSE)
+				.filter(x->added.get(x)==Boolean.FALSE)
 				.forEach(x->updateVertexDistance(startVertex,x));
 
-		//Only works on graphs where a path to every other node is possible (as of now)
-		//TODO: break if only unreachable nodes remain
 		for (int i = 0; i < graph.vertexSet().size()-1; i++) {
-			//Get vertex,distance pair with minimum distance
-			Map.Entry<Integer, Double> min = Collections.min(
-					distances.entrySet().stream()
-							.filter(x->colour.get(x.getKey())==Boolean.FALSE) //Only consider unadded vertices
-							.collect(Collectors.toList()),
-					Map.Entry.comparingByValue());
-			//Set the minimum vertex to added
-			colour.put(min.getKey(),Boolean.TRUE);
-			//Update all neighbours added vertex
-			adjacent(min.getKey())
-					.filter(x->colour.get(x)==Boolean.FALSE)
-					.forEach(x->updateVertexDistance(min.getKey(),x));
+			//Determine if there are any reachable (non infinite distance) non-added vertices
+			if (distances.entrySet().stream().anyMatch(x->added.get(x.getKey())==Boolean.FALSE && x.getValue()!=Double.MAX_VALUE)) {
+				//Get vertex,distance pair with minimum distance
+				Map.Entry<Integer, Double> min = Collections.min(
+						distances.entrySet().stream()
+								.filter(x -> added.get(x.getKey()) == Boolean.FALSE) //Only consider unadded vertices
+								.collect(Collectors.toList()),
+						Map.Entry.comparingByValue());
+				//Set the minimum vertex to added
+				added.put(min.getKey(), Boolean.TRUE);
+				//Update all neighbouring non-added vertices
+				adjacent(min.getKey())
+						.filter(x -> added.get(x) == Boolean.FALSE)
+						.forEach(x -> updateVertexDistance(min.getKey(), x));
+			}else{
+				break;
+			}
 		}
 	}
 
