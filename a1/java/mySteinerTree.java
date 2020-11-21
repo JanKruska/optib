@@ -1,36 +1,44 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import org.jgrapht.Graph;
 import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class mySteinerTree {
 	
 	//Receives a graph and computes a steiner tree
 	public static AsSubgraph<Integer, DefaultWeightedEdge> computeSteinerTree(Graph<Integer, DefaultWeightedEdge> graph, HashSet<Integer> terminals) {
 		Graph<Integer, DefaultWeightedEdge> steinerTree = new DefaultUndirectedWeightedGraph<>(DefaultWeightedEdge.class);
-		for (Integer terminal : terminals) {
-			steinerTree.addVertex(terminal);
-		}
+		//Add terminals
+		terminals.forEach(steinerTree::addVertex);
 
-		// compute distance between all vertex pairs
+		Set<Integer> vertices = new HashSet<>();
+		Set<DefaultWeightedEdge> edges = new HashSet<>();
+
+		// compute paths between all terminal pairs
 		for (Integer vertexA : steinerTree.vertexSet()) {
 			for (Integer vertexB : steinerTree.vertexSet()) {
-
 				//ensure uniqueness of pairs
 				if (vertexA < vertexB) {
 					myShortestPath shortestPath = new myShortestPath(graph, vertexA);
 					shortestPath.computeDistPred();
-					steinerTree.setEdgeWeight(steinerTree.addEdge(vertexA, vertexB), shortestPath.getDistanceToNode(vertexB));
+					ArrayList<Integer> path = shortestPath.constructPathToNode(vertexB);
+					//Remember all vertices and edges on shortest path
+					for (int i = 0; i < path.size()-1; i++) {
+						edges.add(graph.getEdge(path.get(i), path.get(i+1)));
+						vertices.add(path.get(i));
+					}
 				}
 			}
 		}
-
-		// calculate min-spanning tree of -> dense <- terminal graph
-		// TODO replace edges with shortest paths connecting terminals such that steinerTree is a subgraph of Graph
+		//Add all vertices that occurred in shortest paths
+		vertices.forEach(steinerTree::addVertex);
+		//Add all edges that occured in shortest paths
+		edges.forEach(x->steinerTree.addEdge(graph.getEdgeSource(x), graph.getEdgeTarget(x)));
+		//calculate min-spanning tree of graph consisting of the shortest paths between vertices
 		return mySpanningTree.computeMST(steinerTree);
 	}
 
