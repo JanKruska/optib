@@ -2,8 +2,9 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public class mySpanningTree {
 	
@@ -12,7 +13,7 @@ public class mySpanningTree {
 		AsSubgraph<Integer, DefaultWeightedEdge> tree = new AsSubgraph<>(graph, graph.vertexSet(), new HashSet<>());
 
 		//Sort edges by weight
-		var edges = graph.edgeSet().stream()
+		Iterator<DefaultWeightedEdge> edges = graph.edgeSet().stream()
 				.sorted(Comparator.comparingDouble(graph::getEdgeWeight))
 				.iterator();
 

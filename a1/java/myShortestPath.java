@@ -48,7 +48,7 @@ public class myShortestPath {
 		//V-1 times
 		for (int i = 1; i < graph.vertexSet().size()-1; i++) {
 			//relax each edge
-			for (var edge: graph.edgeSet()) {
+			for (DefaultWeightedEdge edge: graph.edgeSet()) {
 				//Get vertices of edge and respective weight
 				Integer u = graph.getEdgeSource(edge);
 				Integer v = graph.getEdgeTarget(edge);
