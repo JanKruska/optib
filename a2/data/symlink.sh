@@ -8,8 +8,9 @@ for i in $PWD/*
 do
     if test -d "$i" 
     then
-       ln "$ampl_dir/ampl" "$i/ampl"
-       ln "$ampl_dir/cplex" "$i/cplex"
+       ln -fs "$ampl_dir/ampl" "$i/ampl"
+       ln -fs "$ampl_dir/cplex" "$i/cplex"
+       ln -fs "$ampl_dir/libcplex12100.so" "$i/libcplex12100.so"
        echo -e 'Done: \t' "$i"
     fi
 done
