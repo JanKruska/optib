@@ -1,10 +1,4 @@
- 
-#float weigth;
-#float value;
-
 param capacity integer;
-#param items;
-#param weight;
 set items;
 param value {items} integer;
 param weight {items} integer;
@@ -16,6 +10,3 @@ maximize used:
 
 subject to knapsack: 
     sum{i in items} (weight[i]*x[i]) <= capacity;
-    
-#    forall{i in items} x[i]>=0;
-#subject to p: forall{i in items}(x[i]<=capacity);

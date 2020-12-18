@@ -1,7 +1,9 @@
 model cities.mod
-data cities_coordinates.dat
+data cities_coordinates50.dat
 
 option solver "./cplex";
 option cplex_options "mipinterval=10 mipdisplay=5 timelimit=3600";
 
 solve;
+
+display e;
