@@ -10,11 +10,8 @@ subj to linkFixedFields {(i,j) in fixedFields}:
         board[i,j] = fixedValues[i,j];
     
 subject to Rows {i in 1..size, j in 1..size, k in 1..size : j!=k}:
-    board[i,j] - board[i,k] < 0;
+    board[i,j] != board[i,k];
     # cells in the same row must be assigned distinct numbers
-    
-subject to Rows2 {i in 1..size, j in 1..size, k in 1..size : j!=k}:
-    board[i,j] - board[i,k] > 0;
     
 subj to Cols {j in 1..size}:
     alldiff {i in 1..size} board[i,j];
