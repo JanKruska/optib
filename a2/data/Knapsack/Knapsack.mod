@@ -3,7 +3,7 @@ set items;
 param value {items} integer;
 param weight {items} integer;
 
-var x{items} integer >=0;
+var x{items} integer >=0 <= 1;
 
 maximize used: 
     sum{i in items} x[i]*value[i];

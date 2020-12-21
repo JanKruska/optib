@@ -1,0 +1,155 @@
+CPLEX 12.10.0.0: mipinterval=10
+mipdisplay=5
+timelimit=3600
+Found incumbent of value 0.000000 after 0.00 sec. (0.00 ticks)
+MIP Presolve eliminated 0 rows and 11 columns.
+MIP Presolve added 6 rows and 6 columns.
+Reduced MIP has 7 rows, 45 columns, and 62 nonzeros.
+Reduced MIP has 0 binaries, 45 generals, 0 SOSs, and 0 indicators.
+Detecting symmetries...
+MIP Presolve eliminated 5 rows and 5 columns.
+MIP Presolve added 6 rows and 6 columns.
+Reduced MIP has 8 rows, 46 columns, and 66 nonzeros.
+Reduced MIP has 0 binaries, 46 generals, 0 SOSs, and 0 indicators.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 24 threads.
+Parallel mode: deterministic, using up to 4 threads for parallel tasks at root LP.
+Root relaxation solution time = 0.00 sec. (0.02 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                            0.0000    28240.0000              --- 
+Found incumbent of value 0.000000 after 0.00 sec. (0.17 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0     0      integral     0     4500.0000     4500.0000        0    0.00%
+Elapsed time = 0.00 sec. (0.17 ticks, tree = 0.00 MB)
+Found incumbent of value 4500.000000 after 0.00 sec. (0.17 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.17 ticks)
+Parallel b&c, 24 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.17 ticks)
+CPLEX 12.10.0.0: optimal integer solution; objective 4500
+0 MIP simplex iterations
+0 branch-and-bound nodes
+x [*] :=
+ 1   0    7   0   13   0   19   0   25   0   31   0   37   0   43   0   49   0
+ 2   0    8   0   14   0   20   0   26   0   32   0   38   0   44   0   50   0
+ 3 450    9   0   15   0   21   0   27   0   33   0   39   0   45   0
+ 4   0   10   0   16   0   22   0   28   0   34   0   40   0   46   0
+ 5   0   11   0   17   0   23   0   29   0   35   0   41   0   47   0
+ 6   0   12   0   18   0   24   0   30   0   36   0   42   0   48   0
+;
+
+CPLEX 12.10.0.0: mipinterval=10
+mipdisplay=5
+timelimit=3600
+Found incumbent of value 0.000000 after 0.00 sec. (0.00 ticks)
+MIP Presolve eliminated 0 rows and 2 columns.
+MIP Presolve added 6 rows and 6 columns.
+Reduced MIP has 7 rows, 54 columns, and 75 nonzeros.
+Reduced MIP has 46 binaries, 8 generals, 0 SOSs, and 0 indicators.
+Probing time = 0.00 sec. (0.01 ticks)
+Detecting symmetries...
+MIP Presolve eliminated 5 rows and 5 columns.
+MIP Presolve added 6 rows and 6 columns.
+Reduced MIP has 8 rows, 55 columns, and 79 nonzeros.
+Reduced MIP has 46 binaries, 9 generals, 0 SOSs, and 0 indicators.
+Probing time = 0.00 sec. (0.01 ticks)
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 24 threads.
+Parallel mode: deterministic, using up to 4 threads for parallel tasks at root LP.
+Root relaxation solution time = 0.00 sec. (0.04 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                            0.0000      857.0000              --- 
+Found incumbent of value 0.000000 after 0.01 sec. (0.34 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0      629.2667     1        0.0000      629.2667        1     --- 
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                          626.0000      629.2667             0.52%
+Found incumbent of value 626.000000 after 0.01 sec. (0.41 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0      628.1111     1      626.0000       Cuts: 2        4    0.34%
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0      627.9828     1      626.0000       Cuts: 2        6    0.32%
+Detecting symmetries...
+
+Repeating presolve.
+MIP Presolve eliminated 2 rows and 42 columns.
+MIP Presolve modified 8 coefficients.
+Reduced MIP has 6 rows, 13 columns, and 18 nonzeros.
+Reduced MIP has 8 binaries, 5 generals, 0 SOSs, and 0 indicators.
+Probing time = 0.00 sec. (0.00 ticks)
+Detecting symmetries...
+Reduced MIP has 6 rows, 13 columns, and 18 nonzeros.
+Reduced MIP has 8 binaries, 5 generals, 0 SOSs, and 0 indicators.
+Represolve time = 0.00 sec. (0.06 ticks)
+Probing time = 0.00 sec. (0.00 ticks)
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 24 threads.
+Root relaxation solution time = 0.00 sec. (0.02 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                          626.0000      627.9828             0.32%
+Found incumbent of value 626.000000 after 0.05 sec. (0.76 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0      627.4245     2      626.0000      627.4245        9    0.23%
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0        cutoff            626.0000                     12     --- 
+Elapsed time = 0.07 sec. (0.81 ticks, tree = 0.01 MB)
+
+Mixed integer rounding cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.07 sec. (0.81 ticks)
+Parallel b&c, 24 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.07 sec. (0.81 ticks)
+CPLEX 12.10.0.0: optimal integer solution; objective 626
+12 MIP simplex iterations
+0 branch-and-bound nodes
+x [*] :=
+ 1 1    6 1   11 0   16 1   21 0   26 1   31 1   36 1   41 0   46 1
+ 2 1    7 1   12 1   17 1   22 0   27 0   32 1   37 0   42 1   47 1
+ 3 1    8 1   13 1   18 0   23 0   28 0   33 1   38 1   43 0   48 1
+ 4 1    9 1   14 1   19 1   24 0   29 0   34 0   39 1   44 1   49 1
+ 5 1   10 1   15 1   20 0   25 1   30 1   35 1   40 0   45 1   50 0
+;
+
