@@ -1,0 +1,117 @@
+case = Bipartition 1
+input =Bipartition
+1
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Bipartitioning of Graph 1:
+The computed bipartitioning is valid./
+
+case = Bipartition 2
+input =Bipartition
+2
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Bipartitioning of Graph 2:
+The computed bipartitioning is valid./
+
+case = Bipartition 3
+input =Bipartition
+3
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Bipartitioning of Graph 3:
+The computed odd cycle is valid./
+
+case = Bipartition 4
+input =Bipartition
+4
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Bipartitioning of Graph 4:
+The computed bipartitioning is valid./
+
+
+
+
+
+
+
+
+
+case = BipartiteMatching 1
+input =BipartiteMatching
+1
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Bipartite Matching of Graph 1:
+The computed matching has maximum weight \.*/
+
+case = BipartiteMatching 2
+input =BipartiteMatching
+2
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Bipartite Matching of Graph 2:
+The computed matching has maximum weight \.*/
+
+case = BipartiteMatching 4
+input =BipartiteMatching
+4
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Bipartite Matching of Graph 4:
+The computed matching has maximum weight \.*/
+
+
+
+
+
+
+
+
+
+case = Football
+input =Football
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Computing Optimal Betting:
+The betting is valid with an optimal value of \.*/
+
+
+
+
+
+
+
+
+
+case = Christofides 1
+input =Christofides
+1
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Christofides Tour for Graph 1:
+The tour is valid and has value \.*/
+
+case = Christofides 2
+input =Christofides
+2
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Christofides Tour for Graph 2:
+The tour is valid and has value \.*/
+
+case = Christofides 3
+input =Christofides
+3
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Christofides Tour for Graph 3:
+There exists no tour, since the computed pair of vertices is not connected./
+
+case = Christofides 4
+input =Christofides
+4
+output =/Which algorithm would you like to test \(Bipartition, BipartiteMatching, Football, Christofides\)\?
+Which instance would you like to solve \(1,2,3,4\)\?
+Computing Christofides Tour for Graph 4:
+There exists no tour, since the computed pair of vertices is not connected./
