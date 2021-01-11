@@ -15,5 +15,5 @@ add_library(spanningTree mySpanningTree.cpp)
 add_library(shortestPath myShortestPath.cpp)
 add_library(steiner mySteinerTree.cpp)
 
-add_executable(Main Main.cpp)
-target_link_libraries(Main readLgf check random spanningTree shortestPath steiner)
+add_executable(_Main _Main.cpp)
+target_link_libraries(_Main readLgf check random spanningTree shortestPath steiner)

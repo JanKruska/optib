@@ -52,7 +52,7 @@ public class CheckerBipartition {
 				System.out.println("The computed cycle should be simple and start and end with the same vertex.");
 			}
 			else {
-				if (oddCycle.size() % 2 != 1) {
+				if (oddCycle.size() % 2 != 0) {
 					System.out.println("The computed cycle is not of odd length.");
 				}
 				else {
