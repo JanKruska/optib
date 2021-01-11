@@ -4,15 +4,21 @@ param fixedValues {fixedFields} integer default 0;
 
 var board {1..size, 1..size} integer, in 1..size;
 # board[i,j] = the number assigned to the cell in row i, col j
- 
+
+var numberPoolRows {1..size, 1..size} binary,
+# numberPoolRows[i,j] = 1 if row i contains j
+
 #subj to linkFixedFields {i in 1..size, j in 1..size: fixedValues[i,j] > 0}:
 subj to linkFixedFields {(i,j) in fixedFields}:
         board[i,j] = fixedValues[i,j];
     
-subject to Rows {i in 1..size, j in 1..size, k in 1..size : j!=k}:
-    board[i,j] != board[i,k];
+subject to Rows {i in 1..size, j in 1..size, k in 1..size}:
+    board[i,k] <= board[j,k];
+
+        subject to Rows {i in 1..size, j in 1..size, k in 1..size}:
+        board[i,k] <= board[j,k];
     # cells in the same row must be assigned distinct numbers
-    
+ 
 subj to Cols {j in 1..size}:
     alldiff {i in 1..size} board[i,j];
     # cells in the same column must be assigned distinct numbers
