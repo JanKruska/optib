@@ -1,3 +1,5 @@
+package de.kruska.optib;
+
 import org.jgrapht.Graph;
 import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.DefaultWeightedEdge;

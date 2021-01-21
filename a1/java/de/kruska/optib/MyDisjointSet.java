@@ -1,3 +1,5 @@
+package de.kruska.optib;
+
 import java.util.Hashtable;
 import java.util.Set;
 

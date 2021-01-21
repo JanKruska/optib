@@ -1,3 +1,4 @@
+package de.kruska.optib;
 /* Read only
 Changes will have no impact on execution/evaluation within VPL
 */
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
-public class _Main {
+public class Main {
 	public static void main(String[] args) throws IOException {
 		String dir = "a1/cxx/";
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
