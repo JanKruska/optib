@@ -4,14 +4,15 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.util.SupplierUtil;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Supplier;
 
 import static org.jgrapht.util.SupplierUtil.DEFAULT_WEIGHTED_EDGE_SUPPLIER;
+import static org.jgrapht.util.SupplierUtil.createIntegerSupplier;
 
 /**
  * Implementation of an algorithm for maximum weighted matchings in bipartite graphs.
@@ -31,75 +32,106 @@ public class MyBipartiteMatching <V,E> {
 	 * Computes Maximum Weighted Matching via Hungarian Algorithm.
 	 *
 	 * Only keeps track of the directed support graph ("augmentingGraph") as matching can be deduced from it
-	 * by checking for reversed edges. Currently O(n^4) luls
+	 * by checking for reversed edges. Currently O(n^4)
 	 */
 	//Computes a maximum weighted matching.
 	public void computeMaximumWeightedMatching() {
-		///////////////////////////////////////////////////////////////////////
-		// First find color classes of bipartite graph using MyBipartition
+		final Supplier<Integer> INTEGER_SUPPLIER = createIntegerSupplier();
 
-		MyBipartition<V, E> bipartition = new MyBipartition<>(graph);
+		///////////////////////////////////////////////////////////////////////
+		// Convert graph <V,E> to wrappedGraph <Integer,DefaultWeightedEdge> so s, t in hungarian algorithm can be added to graph.
+		// Backwards transformation at the end via wrappedEdgesToEdges.
+
+		Graph<Integer, DefaultWeightedEdge> wrappedGraph = new DefaultUndirectedWeightedGraph<>
+				(INTEGER_SUPPLIER, DEFAULT_WEIGHTED_EDGE_SUPPLIER);
+		Map<V, Integer> vtoWrappedV = new HashMap<>();
+		Map<DefaultWeightedEdge, E> wrappedEdgesToEdges = new HashMap<>();
+
+		//convert vertices
+		for (V v : graph.vertexSet()) {
+			vtoWrappedV.put(v, wrappedGraph.addVertex());
+		}
+
+		//convert edges
+		for (E e : graph.edgeSet()) {
+			DefaultWeightedEdge wrappedEdge = wrappedGraph.addEdge(
+					vtoWrappedV.get(graph.getEdgeSource(e)),
+					vtoWrappedV.get(graph.getEdgeTarget(e)));
+			wrappedGraph.setEdgeWeight(wrappedEdge, graph.getEdgeWeight(e));
+			wrappedEdgesToEdges.put(wrappedEdge, e);
+		}
+
+		///////////////////////////////////////////////////////////////////////
+		// First find color classes of the wrappedGraph using MyBipartition
+		MyBipartition<Integer, DefaultWeightedEdge> bipartition = new MyBipartition<>(wrappedGraph);
 		bipartition.computeBipartitioning();
-		// assert that graph is bipartite
+		// assert that the wrappedGraph is bipartite
 		if (!bipartition.isBipartite()){
 			throw new java.lang.Error("MyBipartiteMatching called for non bipartite graph!");
 		}
-		// get color classes of bipartite graph
-		List<HashSet<V>> colorClasses = bipartition.getPartitioning();
-		HashSet<V> U = colorClasses.get(0);
-		HashSet<V> W = colorClasses.get(1);
+		// get color classes of bipartite wrappedGraph
+		List<HashSet<Integer>> colorClasses = bipartition.getPartitioning();
+		HashSet<Integer> U = colorClasses.get(0);
+		HashSet<Integer> W = colorClasses.get(1);
 
 		///////////////////////////////////////////////////////////////////////
 		// Initialize augmentingGraph for an empty Matching
 
-		Graph<V, DefaultWeightedEdge> augmentingGraph = new DefaultDirectedWeightedGraph<>(graph.getVertexSupplier(),
-				DEFAULT_WEIGHTED_EDGE_SUPPLIER);
+		Graph<Integer, DefaultWeightedEdge> augmentingGraph = new DefaultDirectedWeightedGraph<>
+				(INTEGER_SUPPLIER, DEFAULT_WEIGHTED_EDGE_SUPPLIER);
 		U.forEach(augmentingGraph::addVertex);
 		W.forEach(augmentingGraph::addVertex);
-		V s = augmentingGraph.addVertex();
-		V t = augmentingGraph.addVertex();
+		// add s,t
+		Integer s = augmentingGraph.addVertex();
+		Integer t = augmentingGraph.addVertex();
 
-		graph.edgeSet().forEach(
-				(E e) -> {
-					V z = graph.getEdgeTarget(e);
+		// add edges to augmentingGraph, such that they point from U to W.
+		wrappedGraph.edgeSet().forEach(
+				(DefaultWeightedEdge e) -> {
+					Integer z = wrappedGraph.getEdgeTarget(e);
 					DefaultWeightedEdge eAdded = null;
+					//add edge in correct orientation
 					if (W.contains(z)){
-						eAdded = augmentingGraph.addEdge(graph.getEdgeSource(e), z);
+						eAdded = augmentingGraph.addEdge(wrappedGraph.getEdgeSource(e), z);
 					} else {
-						eAdded = augmentingGraph.addEdge(z, graph.getEdgeSource(e));
+						eAdded = augmentingGraph.addEdge(z, wrappedGraph.getEdgeSource(e));
 					}
-					augmentingGraph.setEdgeWeight(eAdded, -graph.getEdgeWeight(e));
+					//weights are negative as points from U to W.
+					augmentingGraph.setEdgeWeight(eAdded, -wrappedGraph.getEdgeWeight(e));
 				}
 		);
 
-		U.forEach((V uVertex) -> {
+		// add s-u edges
+		U.forEach((Integer uVertex) -> {
 				augmentingGraph.setEdgeWeight(augmentingGraph.addEdge(s, uVertex), 0);
 		});
 
-		W.forEach((V wVertex) -> {
+		// add t-w edges
+		W.forEach((Integer wVertex) -> {
 			augmentingGraph.setEdgeWeight(augmentingGraph.addEdge(wVertex, t), 0);
 		});
 
 		///////////////////////////////////////////////////////////////////////
 		while (true){
 			//find shortest s-t path in augmentingGraph
-			BellmanFordShortestPath<V,DefaultWeightedEdge> shortestPath = new BellmanFordShortestPath<>(augmentingGraph);
-			GraphPath<V, DefaultWeightedEdge> path = shortestPath.getPath(s, t);
+			BellmanFordShortestPath<Integer,DefaultWeightedEdge> shortestPath = new BellmanFordShortestPath<>(augmentingGraph);
+			GraphPath<Integer, DefaultWeightedEdge> path = shortestPath.getPath(s, t);
 			if (path == null) {
-				// if path is null no augmenting path exists => done
+				// if path is null no augmenting path exists -> maximal weighted matching found.
 				break;
 			} else {
-				// else augment augmentingGraph graph using path
-				// flip edge directions and invert sign of weight for every edge in path
+				// if path is not null augment augmentingGraph graph using this path:
+				// flip edge direction and invert the sign of the weight for every edge in path
 				path.getEdgeList().forEach((DefaultWeightedEdge e) -> {
-					double edgeWeight = augmentingGraph.getEdgeWeight(e);
 					DefaultWeightedEdge eAdded =
 							augmentingGraph.addEdge(augmentingGraph.getEdgeTarget(e), augmentingGraph.getEdgeSource(e));
+					//set new edge weight
 					augmentingGraph.setEdgeWeight(eAdded, -augmentingGraph.getEdgeWeight(e));
+					// remove old edge
 					augmentingGraph.removeEdge(e);
 				});
 
-				// remove flipped s-first, last-t arcs
+				// remove first and last arc in path from augmentingGraph.
 				augmentingGraph.removeEdge(path.getVertexList().get(1), s);
 				augmentingGraph.removeEdge(t, path.getVertexList().get(path.getVertexList().size()-2));
 			}
@@ -109,10 +141,10 @@ public class MyBipartiteMatching <V,E> {
 		matching = new HashSet<>();
 		augmentingGraph.edgeSet().forEach(
 				(DefaultWeightedEdge e) -> {
-					V z = augmentingGraph.getEdgeTarget(e);
+					Integer z = augmentingGraph.getEdgeTarget(e);
 					// target is in U and ignore s to U edges
-					if (U.contains(z) && (s != augmentingGraph.getEdgeSource(e))){
-						matching.add(graph.getEdge(z, augmentingGraph.getEdgeSource(e)));
+					if (U.contains(z) && (!s.equals(augmentingGraph.getEdgeSource(e)))){
+						matching.add(wrappedEdgesToEdges.get(wrappedGraph.getEdge(z, augmentingGraph.getEdgeSource(e))));
 					}
 				}
 		);
