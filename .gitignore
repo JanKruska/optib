@@ -25,7 +25,6 @@ hs_err_pid*
 # Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
-*.log
 *.lot
 *.fls
 *.out
@@ -303,7 +302,8 @@ TSWLatexianTemp*
 *.lpz
 
 build/
-cmake-build-debug
+cmake-build-debug/
+out/
 
 ampl
 cplex
