@@ -1,4 +1,3 @@
-import com.sun.tools.jconsole.JConsoleContext;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
@@ -6,7 +5,6 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.util.SupplierUtil;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -67,7 +65,8 @@ public class MyBipartiteMatching <V,E> {
 		bipartition.computeBipartitioning();
 		// assert that the wrappedGraph is bipartite
 		if (!bipartition.isBipartite()){
-			throw new java.lang.Error("MyBipartiteMatching called for non bipartite graph!");
+			//Probably more correct to throw exception here, but that won't work in the VPL
+			throw new java.lang.Error("Attempting to construct bipartite matching for non-bipartite graph!");
 		}
 		// get color classes of bipartite wrappedGraph
 		List<HashSet<Integer>> colorClasses = bipartition.getPartitioning();
@@ -89,7 +88,7 @@ public class MyBipartiteMatching <V,E> {
 		wrappedGraph.edgeSet().forEach(
 				(DefaultWeightedEdge e) -> {
 					Integer z = wrappedGraph.getEdgeTarget(e);
-					DefaultWeightedEdge eAdded = null;
+					DefaultWeightedEdge eAdded;
 					//add edge in correct orientation
 					if (W.contains(z)){
 						eAdded = augmentingGraph.addEdge(wrappedGraph.getEdgeSource(e), z);

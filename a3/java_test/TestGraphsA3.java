@@ -15,7 +15,7 @@ public class TestGraphsA3 {
     String dir = "a3/Prog3Java/";
 
     @RepeatedTest(10)
-    void mst(RepetitionInfo repetitionInfo) {
+    void bipartition(RepetitionInfo repetitionInfo) {
         String graphNumber = Integer.toString(repetitionInfo.getCurrentRepetition());
         System.out.println("Computing bipartition of Graph "+graphNumber+":");
         Graph<Integer, DefaultWeightedEdge> graph;
@@ -23,16 +23,16 @@ public class TestGraphsA3 {
             graph = GraphReader.readGraph(dir + "graph" + graphNumber + ".lgf");
         } else {
             GnmRandomBipartiteGraphGenerator<Integer, DefaultWeightedEdge> gnm
-                    = new GnmRandomBipartiteGraphGenerator<Integer, DefaultWeightedEdge>(1000,  1200,  2000);
+                    = new GnmRandomBipartiteGraphGenerator<>(1000, 1200, 2000);
 
-            graph = new Pseudograph<Integer, DefaultWeightedEdge>(
+            graph = new Pseudograph<>(
                     SupplierUtil.createIntegerSupplier(), SupplierUtil.DEFAULT_WEIGHTED_EDGE_SUPPLIER, false);
-            Map<String, Integer> stuff = new HashMap<String, Integer>();
+            Map<String, Integer> stuff = new HashMap<>();
             gnm.generateGraph(graph, stuff);
             graph.addEdge(0,1);
 
         }
-        MyBipartition<Integer, DefaultWeightedEdge> bipartition = new MyBipartition<Integer, DefaultWeightedEdge>(graph);
+        MyBipartition<Integer, DefaultWeightedEdge> bipartition = new MyBipartition<>(graph);
         bipartition.computeBipartitioning();
         CheckerBipartition.checkBipartition(bipartition);
     }
@@ -46,14 +46,14 @@ public class TestGraphsA3 {
             graph = GraphReader.readGraph(dir + "graph" + graphNumber + ".lgf");
         } else {
             GnmRandomBipartiteGraphGenerator<Integer, DefaultWeightedEdge> gnm
-                    = new GnmRandomBipartiteGraphGenerator<Integer, DefaultWeightedEdge>(1000,  1200,  2000);
-            graph = new Pseudograph<Integer, DefaultWeightedEdge>(
+                    = new GnmRandomBipartiteGraphGenerator<>(1000, 1200, 2000);
+            graph = new Pseudograph<>(
                     SupplierUtil.createIntegerSupplier(), SupplierUtil.DEFAULT_WEIGHTED_EDGE_SUPPLIER, false);
-            Map<String, Integer> stuff = new HashMap<String, Integer>();
+            Map<String, Integer> stuff = new HashMap<>();
             gnm.generateGraph(graph, stuff);
 
         }
-        MyBipartiteMatching<Integer, DefaultWeightedEdge> matching = new MyBipartiteMatching<Integer, DefaultWeightedEdge>(graph);
+        MyBipartiteMatching<Integer, DefaultWeightedEdge> matching = new MyBipartiteMatching<>(graph);
         matching.computeMaximumWeightedMatching();
         CheckerBipartiteMatching.checkBipartition(matching);
     }
@@ -65,6 +65,16 @@ public class TestGraphsA3 {
         MyFootballBettingGame football = new MyFootballBettingGame(matchdays);
         football.computeOptimalBets();
         CheckerFootballBettingGame.checkBettinggame(football);
+    }
+
+    @RepeatedTest(4)
+    void cristofides(RepetitionInfo repetitionInfo){
+        String graphNumber = Integer.toString(repetitionInfo.getCurrentRepetition());
+        System.out.println("Computing Christofides Tour for Graph "+graphNumber+":");
+        Graph<Integer, DefaultWeightedEdge> graph = GraphReader.readGraph("graph"+graphNumber+".lgf");
+        MyChristofides<Integer, DefaultWeightedEdge> christofides = new MyChristofides<>(graph);
+        christofides.computeTour();
+        CheckerChristofides.checkTour(christofides);
     }
 
 }
