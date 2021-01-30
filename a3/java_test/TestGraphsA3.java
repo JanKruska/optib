@@ -71,7 +71,7 @@ public class TestGraphsA3 {
     void cristofides(RepetitionInfo repetitionInfo){
         String graphNumber = Integer.toString(repetitionInfo.getCurrentRepetition());
         System.out.println("Computing Christofides Tour for Graph "+graphNumber+":");
-        Graph<Integer, DefaultWeightedEdge> graph = GraphReader.readGraph("graph"+graphNumber+".lgf");
+        Graph<Integer, DefaultWeightedEdge> graph = GraphReader.readGraph(dir + "graph" + graphNumber + ".lgf");
         MyChristofides<Integer, DefaultWeightedEdge> christofides = new MyChristofides<>(graph);
         christofides.computeTour();
         CheckerChristofides.checkTour(christofides);
