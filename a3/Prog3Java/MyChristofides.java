@@ -33,18 +33,22 @@ public class MyChristofides <V, E>{
 	}
 	
 	private void computeShortestPathGraph() {
+		//Construct minimum spanning Tree
 		KruskalMinimumSpanningTree<V,E> mstAlgorithm = new KruskalMinimumSpanningTree<>(this.graph);
 		SpanningTreeAlgorithm.SpanningTree<E> mst = mstAlgorithm.getSpanningTree();
-		//Get all vertices with odd degree in mst
+
+		//Get all vertices with odd degree in mst, and construct induced subgraph
 		Stream<V> oddDegree = graph.vertexSet().stream().filter(
 				v -> mst.getEdges().stream()
 						.mapToInt(e -> graph.getEdgeTarget(e) == v || graph.getEdgeSource(e) == v ? 1 : 0)
 						.sum() % 2 == 1);
 		AsSubgraph<V,E> subgraph = new AsSubgraph<>(this.graph,oddDegree.collect(Collectors.toSet()));
 
+		//Construct minimum weight perfect matching
 		KolmogorovWeightedPerfectMatching<V,E> matchingAlgorithm = new KolmogorovWeightedPerfectMatching<>(subgraph);
 		MatchingAlgorithm.Matching<V, E> matching = matchingAlgorithm.getMatching();
 
+		//Construct shortest path graph containing only edges in mst or matching
 		HashSet<E> edgeSet = new HashSet<>();
 		edgeSet.addAll(mst.getEdges());
 		edgeSet.addAll(matching.getEdges());
