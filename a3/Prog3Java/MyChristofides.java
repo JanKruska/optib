@@ -7,9 +7,7 @@ import org.jgrapht.alg.matching.blossom.v5.KolmogorovWeightedPerfectMatching;
 import org.jgrapht.alg.shortestpath.DijkstraManyToManyShortestPaths;
 import org.jgrapht.alg.spanning.KruskalMinimumSpanningTree;
 import org.jgrapht.alg.util.Pair;
-import org.jgrapht.graph.AsSubgraph;
-import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,24 +45,36 @@ public class MyChristofides <V, E>{
 			MatchingAlgorithm.Matching<V, DefaultWeightedEdge> matching = matchingAlgorithm.getMatching();
 
 			//Construct shortest path graph containing only edges in mst or matching
-			HashSet<DefaultWeightedEdge> edgeSet = new HashSet<>();
-			edgeSet.addAll(mst.getEdges());
-			edgeSet.addAll(matching.getEdges());
-			
-			AsSubgraph<V,DefaultWeightedEdge> remaining = new AsSubgraph<>(this.shortestPathGraph,this.shortestPathGraph.vertexSet(),edgeSet);
+			//HashSet<DefaultWeightedEdge> edgeSet = new HashSet<>();
+			//edgeSet.addAll(mst.getEdges());
+			//edgeSet.addAll(matching.getEdges());
+
+			Multigraph<V, DefaultWeightedEdge> remaining = new WeightedMultigraph<>(DefaultWeightedEdge.class);
+			Graphs.addAllVertices(remaining,this.shortestPathGraph.vertexSet());
+			deepAddEdges(remaining,this.shortestPathGraph,mst.getEdges());
+			deepAddEdges(remaining,this.shortestPathGraph,matching.getEdges());
+
+			List<V> degrees = remaining.vertexSet().stream().filter(v->remaining.degreeOf(v) % 2 == 1).collect(Collectors.toList());
+
 			List<V> eulerTour = new ArrayList<>();
 			//Choose random vertex to start euler tour, all vertices should have even degree
 			eulerTour.add(this.shortestPathGraph.vertexSet().iterator().next());
 
 			//Construct euler tour
 			while(remaining.edgeSet().size()>0){
-				Optional<V> next = adjacent(remaining, eulerTour.get(eulerTour.size() - 1)).findFirst();
-				if (next.isEmpty()){
-					//Probably more correct to throw exception here, but that won't work in the VPL
-					throw new java.lang.Error("Euler tour could not be constructed");
-				}else{
-					remaining.removeEdge(remaining.getEdge(eulerTour.get(eulerTour.size() - 1),next.get()));
-					eulerTour.add(next.get());
+				V expandable = eulerTour.stream().filter(v -> remaining.degreeOf(v) > 1).findFirst().get();
+				int index = eulerTour.indexOf(expandable);
+				Optional<V> next = adjacent(remaining, expandable).findFirst();
+				while(next.isPresent()) {
+					int l = remaining.edgeSet().size();
+
+					remaining.removeEdge(remaining.getEdge(expandable, next.get()));
+					eulerTour.add(index,next.get());
+					index++;
+
+					expandable = next.get();
+					next = adjacent(remaining, expandable)
+									.findFirst();
 				}
 			}
 
@@ -76,6 +86,7 @@ public class MyChristofides <V, E>{
 					visited.add(v);
 				}
 			}
+			this.tour.add(eulerTour.get(0));
 		}
 		
 	}
@@ -104,6 +115,13 @@ public class MyChristofides <V, E>{
 
 	private <X,Y> Stream<X> adjacent(Graph<X,Y> graph,X start){
 		return graph.vertexSet().stream().filter(x-> graph.containsEdge(start,x));
+	}
+
+	private <X,Y> void deepAddEdges(Graph<X,Y> g,Graph<X,Y> source,Collection<? extends Y> edges){
+		for (Y edge : edges){
+			Y copy = g.addEdge(source.getEdgeSource(edge), source.getEdgeTarget(edge));
+			g.setEdgeWeight(copy,source.getEdgeWeight(edge));
+		}
 	}
 
 	public Graph<V, E> getGraph() {
