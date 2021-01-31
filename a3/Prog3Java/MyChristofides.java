@@ -44,17 +44,13 @@ public class MyChristofides <V, E>{
 			KolmogorovWeightedPerfectMatching<V,DefaultWeightedEdge> matchingAlgorithm = new KolmogorovWeightedPerfectMatching<>(subgraph);
 			MatchingAlgorithm.Matching<V, DefaultWeightedEdge> matching = matchingAlgorithm.getMatching();
 
-			//Construct shortest path graph containing only edges in mst or matching
-			//HashSet<DefaultWeightedEdge> edgeSet = new HashSet<>();
-			//edgeSet.addAll(mst.getEdges());
-			//edgeSet.addAll(matching.getEdges());
-
+			//Construct shortest path multigraph containing only edges in mst or matching
 			Multigraph<V, DefaultWeightedEdge> remaining = new WeightedMultigraph<>(DefaultWeightedEdge.class);
 			Graphs.addAllVertices(remaining,this.shortestPathGraph.vertexSet());
 			deepAddEdges(remaining,this.shortestPathGraph,mst.getEdges());
 			deepAddEdges(remaining,this.shortestPathGraph,matching.getEdges());
 
-			List<V> degrees = remaining.vertexSet().stream().filter(v->remaining.degreeOf(v) % 2 == 1).collect(Collectors.toList());
+			assert remaining.vertexSet().stream().noneMatch(v -> remaining.degreeOf(v) % 2 == 1);
 
 			List<V> eulerTour = new ArrayList<>();
 			//Choose random vertex to start euler tour, all vertices should have even degree
@@ -62,24 +58,21 @@ public class MyChristofides <V, E>{
 
 			//Construct euler tour
 			while(remaining.edgeSet().size()>0){
-				V expandable = eulerTour.stream().filter(v -> remaining.degreeOf(v) > 1).findFirst().get();
-				int index = eulerTour.indexOf(expandable);
-				Optional<V> next = adjacent(remaining, expandable).findFirst();
+				V current = eulerTour.stream().filter(v -> remaining.degreeOf(v) > 1).findFirst().get();
+				int index = eulerTour.indexOf(current);
+				Optional<V> next = adjacent(remaining, current).findFirst();
 				while(next.isPresent()) {
-					int l = remaining.edgeSet().size();
-
-					remaining.removeEdge(remaining.getEdge(expandable, next.get()));
+					remaining.removeEdge(remaining.getEdge(current, next.get()));
 					eulerTour.add(index,next.get());
 					index++;
 
-					expandable = next.get();
-					next = adjacent(remaining, expandable)
-									.findFirst();
+					current = next.get();
+					next = adjacent(remaining, current).findFirst();
 				}
 			}
 
 			this.tour = new ArrayList<>();
-			HashSet<V> visited = new HashSet<>();//DS for efficient O(1) contains checks
+			HashSet<V> visited = new HashSet<>();//DS for efficient O(1) contains
 			for (V v:eulerTour) {
 				if(!visited.contains(v)){
 					this.tour.add(v);
@@ -94,7 +87,6 @@ public class MyChristofides <V, E>{
 	private void computeShortestPathGraph() {
 		this.shortestPathGraph = new DefaultUndirectedWeightedGraph<>(DefaultWeightedEdge.class);
 		Graphs.addAllVertices(this.shortestPathGraph,this.graph.vertexSet());
-		//Graphs.addGraph(this.shortestPathGraph,this.graph);
 		ManyToManyShortestPathsAlgorithm<V, E> shortestPathAlgorithm = new DijkstraManyToManyShortestPaths<>(this.graph);
 		for (V s: this.graph.vertexSet()) {
 			for (V t: this.graph.vertexSet()){
